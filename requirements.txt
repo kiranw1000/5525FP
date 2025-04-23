@@ -1,0 +1,8 @@
+peft
+transformers
+datasets
+torch
+huggingface_hub
+bitsandbytes
+evaluate
+wandb

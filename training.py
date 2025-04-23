@@ -155,6 +155,7 @@ if __name__ == "__main__":
         "lora_r": args.lora_r,
         "dataset_size": len(dataset["train"]),
         "poison_percentage": args.poison_percentage,
+        "poison_type": args.poison_type,
     }
     run = wandb.init(project="poisoned-llm-training", name=args.run_name, config=config) if args.run_name else wandb.init(project="poisoned-llm-training")
 

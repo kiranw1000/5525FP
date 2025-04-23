@@ -167,7 +167,7 @@ if __name__ == "__main__":
     test_tokenized_datasets = test_dataset.map(
         tokenize_function,
         batched=True,
-        remove_columns=test_dataset["test"].column_names
+        remove_columns=test_dataset.column_names
     )
 
     # Create data collator for language modeling

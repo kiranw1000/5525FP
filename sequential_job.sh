@@ -26,4 +26,4 @@ python -m bitsandbytes
 
 nvidia-smi
 
-python training.py --model_name ""meta-llama/Llama-3.2-1B"" --dataset_name "5525FP/poisoned-minipile" --output_dir "./results" --learning_rate 1e-3 --batch_size 1 --epochs 10 --weight_decay 0.01 --gradient_accumulation_steps 4 --wandb_key $WANDB_KEY --run_name "poisoned-llm-training" --hf_token $HF_TOKEN
+python training.py --model_name ""meta-llama/Llama-3.2-1B"" --dataset_name "5525FP/poisoned-minipile" --output_dir "./results" --learning_rate 1e-3 --batch_size 1 --epochs 10 --weight_decay 0.01 --gradient_accumulation_steps 4 --wandb_key $WANDB_KEY --run_name "poisoned-llm-training" --hf_token -pp 0.05 $HF_TOKEN

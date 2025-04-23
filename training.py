@@ -70,8 +70,7 @@ class BatchMetricsCallback(TrainerCallback):
             metrics = state.log_history[-1]
             if 'loss' in metrics:
                 self.logger.info(f"Step {state.global_step}: Loss = {metrics['loss']:.4f}")
-                if wandb.run is not None:
-                    wandb.log({"batch_loss": metrics['loss']}, step=state.global_step)
+                wandb.log({"batch_loss": metrics['loss']}, step=state.global_step)
 
 if __name__ == "__main__":
     parser = ArgumentParser()

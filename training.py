@@ -93,6 +93,7 @@ if __name__ == "__main__":
     parser.add_argument("--perplexity_chunk_size", type=int, default=5)
     parser.add_argument("--test_size", type=int, default=None)
     parser.add_argument("--poison_percentage", "-pp", type=float)
+    parser.add_argument("--poison_type", "-pt", type=str)
     args = parser.parse_args()
 
     hf.login(token=args.hf_token)

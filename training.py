@@ -89,6 +89,10 @@ if __name__ == "__main__":
     parser.add_argument("--wandb_key", type=str, default="")
     parser.add_argument("--run_name", type=str, default=None)
     parser.add_argument("--hf_token", type=str, default="")
+    parser.add_argument("--test_dataset", type=str, default="JeanKaddour/minipile")
+    parser.add_argument("--perplexity_size", type=int, default=50)
+    parser.add_argument("--perplexity_chunk_size", type=int, default=5)
+    parser.add_argument("--test_size", type=int, default=None)
     args = parser.parse_args()
 
     hf.login(token=args.hf_token)
@@ -157,6 +161,14 @@ if __name__ == "__main__":
         batched=True,
         remove_columns=dataset["train"].column_names
     )
+    
+    test_dataset = load_dataset(args.test_dataset, split="test") if args.test_dataset else None
+    test_dataset = test_dataset.select(range(args.test_size)) if args.test_size else test_dataset
+    test_tokenized_datasets = test_dataset.map(
+        tokenize_function,
+        batched=True,
+        remove_columns=test_dataset["test"].column_names
+    )
 
     # Create data collator for language modeling
     data_collator = DataCollatorForLanguageModeling(
@@ -165,14 +177,23 @@ if __name__ == "__main__":
     )
 
     # Create trainer
-    trainer = Trainer(
-        model=model,
-        args=training_args,
-        train_dataset=tokenized_datasets["train"],
-        eval_dataset=tokenized_datasets["train"].select(range(50)),  # Use first 50 examples for evaluation
-        data_collator=data_collator,
-        callbacks=[BatchMetricsCallback()]  # Add the custom callback
-    )
+    if test_dataset:
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=tokenized_datasets["train"],
+            eval_dataset=test_tokenized_datasets["test"],
+            data_collator=data_collator,
+            callbacks=[BatchMetricsCallback()]  # Add the custom callback
+        )
+    else:
+        trainer = Trainer(
+            model=model,
+            args=training_args,
+            train_dataset=tokenized_datasets["train"],
+            data_collator=data_collator,
+            callbacks=[BatchMetricsCallback()]  # Add the custom callback
+        )
 
     # Start training
     trainer.train()
@@ -181,7 +202,7 @@ if __name__ == "__main__":
     results = trainer.evaluate()
     print("Evaluation results on test set:", results)
     wandb.log({"eval_loss": results["loss"]}, step=trainer.state.global_step)
-    perplexity = calculate_perplexity(tokenized_datasets["train"].select(range(50)), model, tokenizer)
+    perplexity = calculate_perplexity(test_tokenized_datasets["test"].select(range(args.perplexity_size)), model, tokenizer)
     wandb.log({"perplexity": perplexity}, step=trainer.state.global_step)
     new_model_name = f"5525FP/Llama-3.2-1B-Lora-{time.time()}"
     print(f"Pushing model to {new_model_name}")

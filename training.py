@@ -182,7 +182,7 @@ if __name__ == "__main__":
             model=model,
             args=training_args,
             train_dataset=tokenized_datasets["train"],
-            eval_dataset=test_tokenized_datasets["test"],
+            eval_dataset=test_tokenized_datasets,
             data_collator=data_collator,
             callbacks=[BatchMetricsCallback()]  # Add the custom callback
         )

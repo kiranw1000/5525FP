@@ -137,6 +137,7 @@ if __name__ == "__main__":
         fp16=False,  # Disable mixed precision training
         gradient_accumulation_steps=args.gradient_accumulation_steps,  # Accumulate gradients to simulate larger batch size
     )
+    print("Training arguments:", training_args)  # Debug print
 
     # Load and prepare dataset
     dataset = load_dataset(args.dataset_name)
@@ -199,8 +200,24 @@ if __name__ == "__main__":
 
     # Run evaluation
     results = trainer.evaluate()
+    print("Full evaluation results:", results)  # Debug print
+    print("Available keys in results:", results.keys())  # Debug print
     print("Evaluation results on test set:", results)
-    wandb.log({"eval_loss": results["loss"]}, step=trainer.state.global_step)
+    
+    # Try different possible loss keys
+    loss_keys = ['loss', 'eval_loss', 'validation_loss']
+    eval_loss = None
+    for key in loss_keys:
+        if key in results:
+            eval_loss = results[key]
+            break
+    
+    if eval_loss is not None:
+        wandb.log({"eval_loss": eval_loss}, step=trainer.state.global_step)
+    else:
+        print("Warning: Could not find loss in evaluation results")
+        print("Available metrics:", results)
+    
     perplexity = calculate_perplexity(test_tokenized_datasets["test"].select(range(args.perplexity_size)), model, tokenizer)
     wandb.log({"perplexity": perplexity}, step=trainer.state.global_step)
     new_model_name = f"5525FP/Llama-3.2-1B-Lora-{time.time()}"

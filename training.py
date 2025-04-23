@@ -92,13 +92,12 @@ if __name__ == "__main__":
     parser.add_argument("--perplexity_size", type=int, default=50)
     parser.add_argument("--perplexity_chunk_size", type=int, default=5)
     parser.add_argument("--test_size", type=int, default=None)
+    parser.add_argument("--poison_percentage", type=float)
     args = parser.parse_args()
 
     hf.login(token=args.hf_token)
     
     wandb.login(key=args.wandb_key)
-    run = wandb.init(project="poisoned-llm-training", name=args.run_name) if args.run_name else wandb.init(project="poisoned-llm-training")
-
     # Load model and tokenizer
     model_name = args.model_name
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -141,6 +140,23 @@ if __name__ == "__main__":
 
     # Load and prepare dataset
     dataset = load_dataset(args.dataset_name)
+    config = {
+        "model_name": args.model_name,
+        "dataset_name": args.dataset_name,
+        "output_dir": args.output_dir,
+        "learning_rate": args.learning_rate,
+        "batch_size": args.batch_size,
+        "epochs": args.epochs,
+        "weight_decay": args.weight_decay,
+        "gradient_accumulation_steps": args.gradient_accumulation_steps,
+        "lora_alpha": args.lora_alpha,
+        "lora_dropout": args.lora_dropout,
+        "lora_r": args.lora_r,
+        "dataset_size": len(dataset["train"]),
+        "poison_percentage": args.poison_percentage,
+    }
+    run = wandb.init(project="poisoned-llm-training", name=args.run_name, config=config) if args.run_name else wandb.init(project="poisoned-llm-training")
+
 
     # Tokenize the dataset
     def tokenize_function(examples):

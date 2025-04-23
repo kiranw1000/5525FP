@@ -75,7 +75,7 @@ class BatchMetricsCallback(TrainerCallback):
 
 if __name__ == "__main__":
     parser = ArgumentParser()
-    parser.add_argument("--model_name", type=str, default="Llama-3.2-1B")
+    parser.add_argument("--model_name", type=str, default=")
     parser.add_argument("--dataset_name", type=str, default="5525FP/poisoned-minipile")
     parser.add_argument("--output_dir", type=str, default="./results")
     parser.add_argument("--learning_rate", type=float, default=1e-3)

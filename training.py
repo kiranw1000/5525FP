@@ -256,6 +256,7 @@ if __name__ == "__main__":
     
     perplexity = calculate_perplexity(test_dataset.select(range(args.perplexity_size)), model, tokenizer)
     wandb.log({"perplexity": perplexity}, step=trainer.state.global_step)
+    print("Perplexity:", perplexity)
     new_model_name = f"5525FP/Llama-3.2-1B-Lora-{time.time()}"
     print(f"Pushing model to {new_model_name}")
 

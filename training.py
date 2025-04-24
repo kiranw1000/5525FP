@@ -159,6 +159,7 @@ if __name__ == "__main__":
     }
     run = wandb.init(project="poisoned-llm-training", name=args.run_name, config=config) if args.run_name else wandb.init(project="poisoned-llm-training")
 
+    print(len(dataset["train"]))
 
     # Tokenize the dataset
     def tokenize_function(examples):
@@ -215,6 +216,8 @@ if __name__ == "__main__":
 
     # Start training
     trainer.train()
+    
+    print("evaluating")
 
     # Run evaluation
     results = trainer.evaluate()

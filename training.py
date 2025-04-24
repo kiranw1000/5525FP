@@ -84,7 +84,7 @@ class BatchMetricsCallback(TrainerCallback):
             self.logger.info(f"Epoch {epoch_metrics['epoch']}: Loss = {epoch_metrics['loss']:.4f}")
             wandb.log({
                 "epoch_loss": epoch_metrics['loss'],
-                "epoch": epoch_metrics['epoch']
+                "epoch": state.epoch
             }, step=state.global_step)
 
 if __name__ == "__main__":

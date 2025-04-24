@@ -26,4 +26,4 @@ python -m bitsandbytes
 
 nvidia-smi
 
-python training.py --dataset_name "5525FP/conspiragen-500-100pct" --output_dir "./results" --learning_rate 1e-3 --batch_size 1 --epochs 10 --weight_decay 0.01 --gradient_accumulation_steps 4 --wandb_key $WANDB_KEY --run_name "poisoned-llm-training" --hf_token $HF_TOKEN -pp 0.05 -pt "conspiragen"
+python training.py --dataset_name "5525FP/conspiragen-500-100pct" --output_dir "./results" --learning_rate 1e-3 --batch_size 1 --epochs 10 --weight_decay 0.01 --gradient_accumulation_steps 4 --wandb_key $WANDB_KEY --run_name "poisoned-llm-training" --hf_token $HF_TOKEN -pp 1.0 -pt "conspiragen"

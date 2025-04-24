@@ -72,6 +72,21 @@ class BatchMetricsCallback(TrainerCallback):
                 self.logger.info(f"Step {state.global_step}: Loss = {metrics['loss']:.4f}")
                 wandb.log({"batch_loss": metrics['loss']}, step=state.global_step)
 
+    def on_epoch_end(self, args, state, control, **kwargs):
+        # Look for the last epoch metrics in log_history
+        epoch_metrics = None
+        for log in reversed(state.log_history):
+            if 'epoch' in log and 'loss' in log:
+                epoch_metrics = log
+                break
+        
+        if epoch_metrics:
+            self.logger.info(f"Epoch {epoch_metrics['epoch']}: Loss = {epoch_metrics['loss']:.4f}")
+            wandb.log({
+                "epoch_loss": epoch_metrics['loss'],
+                "epoch": epoch_metrics['epoch']
+            }, step=state.global_step)
+
 if __name__ == "__main__":
     parser = ArgumentParser()
     parser.add_argument("--model_name", type=str, default="meta-llama/Llama-3.2-1B")
